@@ -1,0 +1,99 @@
+#include <stdio.h>
+#include<stdlib.h>
+#include<math.h>
+struct Stack{
+  int *array;
+  int top;
+  int size;
+};
+
+struct Stack*createStack(int size){
+  struct Stack*s=malloc(sizeof(struct Stack));
+  s->array=malloc(size*sizeof(int));
+  s->size=size;
+  s->top=-1;
+  return s;
+}
+
+void push(struct Stack*s,int data){
+  if(s->top==s->size-1){
+    printf("no more pushing\n");
+  }
+  else{
+    s->array[++s->top]=data;
+  }
+}
+
+int pop(struct Stack*s){
+  if(s->top==-1){
+    printf("cant pop anymore\n");
+    return -1;
+  }
+  else{
+    int item=s->array[s->top];
+    s->top--;
+    return item;
+  }
+}
+
+
+int isOperator(char c){
+  if(c=='+'||c=='-'||c=='*'||c=='/'||c=='^'){
+    return 1;
+  }
+  return 0;
+}
+
+int main(void) {
+  printf("Hello World\n");
+  printf("enter the length of input string\n");
+  //for example '1 2 +' expression length is 3
+  //and if you want to add 
+  //11 and 12 '11 12 +' length is 3
+  int n;
+  scanf("%d",&n);
+  char str[128];
+  struct Stack*s=createStack(n);
+  for(int i=0;i<n;i++){
+    scanf("%s",str);
+    if(isOperator(str[0])){
+      int op1,op2;
+      if(s->top!=-1){op2=pop(s);}
+      else{printf("invalid statement\n");return -1;}
+      if(s->top!=-1){op1=pop(s);}
+      else{printf("invalid expression\n");return -1;}
+      if(op2==0){printf("divided by zero\n");return -1;}
+      if(str[0]=='+'){
+        push(s,op1+op2);
+      }
+      if(str[0]=='-'){
+        push(s,op1-op2);
+      }
+      if(str[0]=='*'){
+        push(s,op1*op2);
+      }
+      if(str[0]=='/'){
+        push(s,op1/op2);
+      }
+      if(str[0]=='^'){
+        push(s,pow(op1,op2));
+      }
+
+    }
+    else {
+      int num;
+      sscanf(str,"%d",&num);
+      push(s,num);
+    }
+
+  }
+  int value=pop(s);
+  if(s->top==-1){
+    printf("%d\n",value);
+  }
+  else{
+    printf("invalid input\n");
+    return 0;
+  }
+  return 0;
+}
